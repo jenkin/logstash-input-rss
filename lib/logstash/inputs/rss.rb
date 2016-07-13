@@ -86,10 +86,18 @@ class LogStash::Inputs::Rss < LogStash::Inputs::Base
           end
           @codec.decode(content) do |event|
             event["Feed"] = @url
+            event["id"] = item.id.content
             event["updated"] = item.updated.content
             event["title"] = item.title.content
             event["link"] = item.link.href
             event["author"] = item.author.name.content
+            unless item.source.nil?
+              event["source"] = {}
+              event["source"]["id"] = item.source.id.content
+              event["source"]["link"] = item.source.link.href
+              event["source"]["updated"] = item.source.updated.content
+              event["source"]["title"] = item.source.title.content
+            end
             unless item.published.nil?
               event["published"] = item.published.content
             end
